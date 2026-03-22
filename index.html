@@ -741,6 +741,15 @@
         </div>
     </section>
 
+
+    <section class="section">
+        <h2>Details for the Curious</h2>
+        <p>Vision2Music works by training a <strong>shared embedding space</strong> for both vision and music. Images and audio tracks are projected into the same latent space, enabling cross-modal retrieval in both directions.</p>
+        <p>In practice, this means the system can also find <strong>matching images for a given piece of music</strong> — but here lies an interesting asymmetry. While image-to-music suggestions are diverse and contextually rich, music-to-image retrieval tends to surface images of <strong>musical instruments</strong>. The diversity that makes Vision2Music compelling in one direction doesn't fully carry over to the reverse.</p>
+        <p>Another intriguing possibility: since the shared embedding space encodes semantic meaning across modalities, it could theoretically serve as <strong>input for diffusion models</strong> like DALL·E — using music instead of text as a conditioning signal for image generation.</p>
+        <p>As for how the unsupervised training of this shared space actually works — that, unfortunately, has to remain under wraps.</p>
+    </section>
+
     <section class="section">
         <h2>Conclusion</h2>
         <p>Both approaches have their merits. Soundmatch leverages an enormous dataset and delivers reliable, broadly appealing results. Vision2Music, with its direct neural connection, trades that reliability for something more interesting: the ability to <strong>interpret</strong> an image, not just classify it.</p>
