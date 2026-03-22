@@ -475,6 +475,38 @@
             margin-bottom: 0;
         }
 
+        /* Mobile comparison: stacked cards */
+        .comparison-mobile {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 2.5rem 0;
+        }
+
+        .comparison-row-mobile {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+        }
+
+        .comparison-row-mobile .row-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .comparison-row-mobile .row-label.v2m { color: var(--accent); }
+        .comparison-row-mobile .row-label.sm { color: var(--text-dim); }
+
+        .comparison-row-mobile p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
         /* ── Footer ── */
         footer {
             text-align: center;
@@ -508,7 +540,11 @@
             }
 
             .comparison {
-                grid-template-columns: 1fr;
+                display: none;
+            }
+
+            .comparison-mobile {
+                display: flex;
             }
         }
     </style>
@@ -518,7 +554,7 @@
 <!-- ═══════════ HERO ═══════════ -->
 <section class="hero" id="top">
     <div class="hero-content">
-        <div class="hero-badge">AI × Music Research</div>
+        <div class="hero-badge">AI × Music Research · June 2024</div>
         <h1><em>Vision2Music</em><br>vs Soundmatch</h1>
         <p class="hero-sub">When an AI looks at an image, what music does it hear? A comparison of two fundamentally different approaches to visual-to-audio matching.</p>
         <a href="#approach" class="hero-arrow" aria-label="Scroll down">↓</a>
@@ -582,6 +618,34 @@
             <div class="comparison-cell"><p>Primarily captures the overall mood of the image</p></div>
             <div class="comparison-cell"><p>Excels at <strong>individualistic, edge-case</strong> scenarios</p></div>
             <div class="comparison-cell"><p>Excels at <strong>generic, broad-appeal</strong> scenarios</p></div>
+        </div>
+
+        <!-- Mobile comparison (shown only on small screens) -->
+        <div class="comparison-mobile">
+            <div class="comparison-row-mobile">
+                <div class="row-label v2m">Vision2Music — Communication</div>
+                <p>Direct neural connection between Vision AI and Music AI — no keyword bottleneck</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label sm">Soundmatch — Communication</div>
+                <p>Keywords extracted from video, matched via large-scale YouTube usage data</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label v2m">Vision2Music — Representation</div>
+                <p>Can represent specific objects in the image through music (figuration)</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label sm">Soundmatch — Representation</div>
+                <p>Primarily captures the overall mood of the image</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label v2m">Vision2Music — Best for</div>
+                <p>Excels at <strong>individualistic, edge-case</strong> scenarios</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label sm">Soundmatch — Best for</div>
+                <p>Excels at <strong>generic, broad-appeal</strong> scenarios</p>
+            </div>
         </div>
     </section>
 
