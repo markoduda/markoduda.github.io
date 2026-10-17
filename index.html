@@ -91,6 +91,16 @@
             transition: color 0.2s ease;
         }
 
+        a span {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        a small {
+            font-style: normal;
+        }
+
         a::after {
             content: '→';
             font-family: 'IBM Plex Mono', monospace;
@@ -123,14 +133,14 @@
     <section>
         <div class="label">Work</div>
         <ul>
-            <li><a href="vision2music.html">Research Project</a></li>
+            <li><a href="vision2music.html"><span>Vision2Music<small class="label">Research Project</small></span></a></li>
         </ul>
     </section>
 
     <section>
         <div class="label">Hobby</div>
         <ul>
-            <li><a href="Altarpiece_no_1.html">Design Project</a></li>
+            <li><a href="Altarpiece_no_1.html"><span>Hilma af Klint - Interactive<small class="label">Design Project</small></span></a></li>
         </ul>
     </section>
 </main>
