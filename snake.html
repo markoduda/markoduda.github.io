@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0b0a;
+            --bg-card: #12110f;
+            --text: #e9e2d0;
+            --text-muted: #bdb6a6;
+            --line: #3a3631;
+            --accent: #c79b3e;
+            --salmon: #e2836c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'EB Garamond', serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .topbar {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 2rem 2rem 0;
+        }
+
+        .topbar a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .topbar a:hover,
+        .topbar a:focus-visible {
+            color: var(--accent);
+            outline: none;
+        }
+
+        main {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 3rem 1rem 4rem;
+        }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .scores {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 1rem;
+        }
+
+        .scores strong {
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        .board {
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            touch-action: none;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(12, 11, 10, 0.78);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .overlay[hidden] {
+            display: none;
+        }
+
+        .overlay p {
+            font-size: 22px;
+            font-style: italic;
+        }
+
+        .overlay .label {
+            color: var(--accent);
+        }
+
+        .hint {
+            margin-top: 1rem;
+        }
+
+        .pad {
+            display: none;
+            grid-template-columns: repeat(3, 56px);
+            grid-template-rows: repeat(2, 56px);
+            gap: 6px;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .pad button {
+            background: none;
+            border: 1px solid var(--line);
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .pad button:active {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .pad [data-dir="up"] { grid-column: 2; grid-row: 1; }
+        .pad [data-dir="left"] { grid-column: 1; grid-row: 2; }
+        .pad [data-dir="down"] { grid-column: 2; grid-row: 2; }
+        .pad [data-dir="right"] { grid-column: 3; grid-row: 2; }
+
+        @media (pointer: coarse) {
+            .pad { display: grid; }
+            .hint { display: none; }
+        }
+    </style>
+</head>
+<body>
+<nav class="topbar">
+    <a href="index.html" class="label">← Projects</a>
+</nav>
+
+<main>
+    <header>
+        <h1>Snake</h1>
+        <div class="label">Hobby Project</div>
+    </header>
+
+    <div class="scores label">
+        <span>Score <strong id="score">0</strong></span>
+        <span>Best <strong id="best">0</strong></span>
+    </div>
+
+    <div class="board">
+        <canvas id="game" width="400" height="400"></canvas>
+        <div class="overlay" id="overlay">
+            <p id="message">Snake</p>
+            <span class="label" id="action">Press space or tap to start</span>
+        </div>
+    </div>
+
+    <p class="hint label">Arrow keys / WASD to move · Space to pause</p>
+
+    <div class="pad" aria-label="Controls">
+        <button data-dir="up" aria-label="Up">↑</button>
+        <button data-dir="left" aria-label="Left">←</button>
+        <button data-dir="down" aria-label="Down">↓</button>
+        <button data-dir="right" aria-label="Right">→</button>
+    </div>
+</main>
+
+<script>
+    const GRID = 20;
+    const TICK_MS = 110;
+
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const cell = canvas.width / GRID;
+    const overlay = document.getElementById('overlay');
+    const message = document.getElementById('message');
+    const action = document.getElementById('action');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+
+    const css = getComputedStyle(document.documentElement);
+    const colors = {
+        snake: css.getPropertyValue('--text').trim(),
+        head: css.getPropertyValue('--accent').trim(),
+        food: css.getPropertyValue('--salmon').trim(),
+        grid: css.getPropertyValue('--line').trim()
+    };
+
+    const DIRS = {
+        up: { x: 0, y: -1 },
+        down: { x: 0, y: 1 },
+        left: { x: -1, y: 0 },
+        right: { x: 1, y: 0 }
+    };
+
+    let snake, dir, queue, food, score, state, timer;
+    let best = 0;
+    try { best = Number(localStorage.getItem('snake-best')) || 0; } catch (e) {}
+    bestEl.textContent = best;
+
+    function reset() {
+        snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+        dir = DIRS.right;
+        queue = [];
+        score = 0;
+        scoreEl.textContent = score;
+        placeFood();
+    }
+
+    function placeFood() {
+        do {
+            food = { x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID) };
+        } while (snake.some(s => s.x === food.x && s.y === food.y));
+    }
+
+    function turn(name) {
+        const next = DIRS[name];
+        const last = queue.length ? queue[queue.length - 1] : dir;
+        if (next.x === -last.x && next.y === -last.y) return;
+        if (queue.length < 2) queue.push(next);
+    }
+
+    function step() {
+        if (queue.length) dir = queue.shift();
+        const head = {
+            x: (snake[0].x + dir.x + GRID) % GRID,
+            y: (snake[0].y + dir.y + GRID) % GRID
+        };
+
+        const ate = head.x === food.x && head.y === food.y;
+        const body = ate ? snake : snake.slice(0, -1);
+        if (body.some(s => s.x === head.x && s.y === head.y)) {
+            return gameOver();
+        }
+
+        snake.unshift(head);
+        if (ate) {
+            score++;
+            scoreEl.textContent = score;
+            placeFood();
+        } else {
+            snake.pop();
+        }
+        draw();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = colors.grid;
+        for (let x = 0; x < GRID; x++) {
+            for (let y = 0; y < GRID; y++) {
+                ctx.fillRect(x * cell + cell / 2 - 1, y * cell + cell / 2 - 1, 2, 2);
+            }
+        }
+
+        ctx.fillStyle = colors.food;
+        ctx.beginPath();
+        ctx.arc(food.x * cell + cell / 2, food.y * cell + cell / 2, cell / 2 - 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        snake.forEach((s, i) => {
+            ctx.fillStyle = i === 0 ? colors.head : colors.snake;
+            ctx.fillRect(s.x * cell + 1, s.y * cell + 1, cell - 2, cell - 2);
+        });
+    }
+
+    function start() {
+        if (state === 'over' || !state) reset();
+        state = 'running';
+        overlay.hidden = true;
+        clearInterval(timer);
+        timer = setInterval(step, TICK_MS);
+        draw();
+    }
+
+    function pause() {
+        state = 'paused';
+        clearInterval(timer);
+        message.textContent = 'Paused';
+        action.textContent = 'Press space or tap to resume';
+        overlay.hidden = false;
+    }
+
+    function gameOver() {
+        state = 'over';
+        clearInterval(timer);
+        if (score > best) {
+            best = score;
+            bestEl.textContent = best;
+            try { localStorage.setItem('snake-best', best); } catch (e) {}
+        }
+        message.textContent = 'Game over — ' + score;
+        action.textContent = 'Press space or tap to restart';
+        overlay.hidden = false;
+    }
+
+    function toggle() {
+        state === 'running' ? pause() : start();
+    }
+
+    const KEYS = {
+        ArrowUp: 'up', KeyW: 'up',
+        ArrowDown: 'down', KeyS: 'down',
+        ArrowLeft: 'left', KeyA: 'left',
+        ArrowRight: 'right', KeyD: 'right'
+    };
+
+    document.addEventListener('keydown', e => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            toggle();
+        } else if (KEYS[e.code]) {
+            e.preventDefault();
+            if (state !== 'running') start();
+            turn(KEYS[e.code]);
+        }
+    });
+
+    overlay.addEventListener('click', start);
+
+    document.querySelectorAll('.pad button').forEach(btn => {
+        btn.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            if (state !== 'running') start();
+            turn(btn.dataset.dir);
+        });
+    });
+
+    let touchStart = null;
+    canvas.addEventListener('pointerdown', e => { touchStart = { x: e.clientX, y: e.clientY }; });
+    canvas.addEventListener('pointerup', e => {
+        if (!touchStart) return;
+        const dx = e.clientX - touchStart.x;
+        const dy = e.clientY - touchStart.y;
+        touchStart = null;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
+        turn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+    });
+
+    reset();
+    draw();
+</script>
+</body>
+</html>
