@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision2Music vs Soundmatch — When AI Listens to Images</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0b0a;
+            --bg-card: #12110f;
+            --bg-card-hover: #171512;
+            --text: #e9e2d0;
+            --text-muted: #bdb6a6;
+            --text-dim: #8a8478;
+            --line: #3a3631;
+            --line-hover: #57514a;
+            --accent: #c79b3e;
+            --accent-hover: #e7c66a;
+            --accent-wash: rgba(199, 155, 62, 0.08);
+            --lavender: #a9a6c9;
+            --green: #4f8040;
+            --ochre: #c48d3c;
+            --salmon: #e2836c;
+            --blue: #3f78c4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg);
+        }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 20px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 400;
+            font-style: normal;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* ── Top bar ── */
+        .topbar {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 2rem 2rem 0;
+        }
+
+        .topbar a {
+            color: var(--text-muted);
+        }
+
+        .topbar a:hover,
+        .topbar a:focus-visible {
+            color: var(--accent);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero-content {
+            max-width: 720px;
+        }
+
+        .hero-motif {
+            display: block;
+            width: 132px;
+            height: 132px;
+            margin: 0 auto 2.5rem;
+            animation: fadeUp 0.8s ease both;
+        }
+
+        .hero-badge {
+            margin-bottom: 1.75rem;
+            animation: fadeUp 0.8s ease 0.05s both;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            line-height: 1.05;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.75rem;
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 540px;
+            margin: 0 auto 2.75rem;
+            animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .hero-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: border-color 0.2s ease, color 0.2s ease;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+
+        .hero-arrow:hover,
+        .hero-arrow:focus-visible {
+            border-color: var(--accent);
+            color: var(--accent);
+            outline: none;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Main content ── */
+        .content {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem;
+        }
+
+        .section {
+            margin-bottom: 5rem;
+        }
+
+        h2 {
+            font-size: 2.1rem;
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1.2;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.75rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        p strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+        }
+
+        /* ── Blockquote ── */
+        blockquote {
+            border-left: 1px solid var(--accent);
+            padding: 0.25rem 0 0.25rem 1.5rem;
+            margin: 2rem 0;
+            font-size: 1.15rem;
+            color: var(--text);
+            font-style: italic;
+        }
+
+        blockquote cite {
+            display: block;
+            margin-top: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-style: normal;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        /* ── How it works diagram ── */
+        .arch-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2.5rem 0;
+        }
+
+        .arch-box {
+            border: 1px solid var(--line);
+            padding: 1.5rem;
+        }
+
+        .arch-box.v2m {
+            border-color: var(--accent);
+        }
+
+        .arch-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1.25rem;
+            color: var(--lavender);
+        }
+
+        .arch-box.v2m .arch-title {
+            color: var(--accent);
+        }
+
+        .arch-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .arch-node {
+            padding: 10px 18px;
+            border: 1px solid var(--line);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--text);
+            text-align: center;
+            width: 100%;
+        }
+
+        .arch-node.accent {
+            border-color: var(--accent);
+            background: var(--accent-wash);
+            color: var(--accent);
+        }
+
+        .arch-node.keyword {
+            border-color: var(--lavender);
+            color: var(--lavender);
+        }
+
+        .arch-arrow {
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        /* ── Example cards ── */
+        .example-card {
+            border: 1px solid var(--line);
+            margin-bottom: 3rem;
+        }
+
+        .example-image-wrap {
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .example-image-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .example-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--bg);
+            padding: 8px 14px;
+            color: var(--text);
+        }
+
+        .example-body {
+            padding: 2rem;
+        }
+
+        .example-body h3 {
+            font-size: 1.6rem;
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1.25;
+            margin-bottom: 0.75rem;
+        }
+
+        .example-body > p {
+            margin-bottom: 1.75rem;
+        }
+
+        /* ── Track group ── */
+        .track-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .track-group-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+        }
+
+        .track-group-label.v2m {
+            color: var(--accent);
+        }
+
+        .track-group-label.soundmatch {
+            color: var(--lavender);
+        }
+
+        .track-group-label::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .track-group-label.v2m::before {
+            background: var(--accent);
+        }
+
+        .track-group-label.soundmatch::before {
+            background: var(--lavender);
+        }
+
+        .spotify-embed {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .spotify-embed iframe {
+            display: block;
+        }
+
+        .soundmatch-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 12px 16px;
+            border: 1px solid var(--line);
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .soundmatch-link:hover,
+        .soundmatch-link:focus-visible {
+            color: var(--lavender);
+            border-color: var(--lavender);
+            outline: none;
+        }
+
+        .soundmatch-link svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        /* ── Comparison table ── */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+            margin: 2.5rem 0;
+        }
+
+        .comparison-cell {
+            background: var(--bg);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .comparison-cell.header {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--lavender);
+            background: var(--bg-card);
+        }
+
+        .comparison-cell.header.v2m {
+            color: var(--accent);
+        }
+
+        .comparison-cell p {
+            font-size: 1.05rem;
+            margin-bottom: 0;
+        }
+
+        /* Mobile comparison: stacked cards */
+        .comparison-mobile {
+            display: none;
+            flex-direction: column;
+            margin: 2.5rem 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .comparison-row-mobile {
+            padding: 1.1rem 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .comparison-row-mobile .row-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.4rem;
+        }
+
+        .comparison-row-mobile .row-label.v2m { color: var(--accent); }
+        .comparison-row-mobile .row-label.sm { color: var(--lavender); }
+
+        .comparison-row-mobile p {
+            margin-bottom: 0;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            body {
+                font-size: 18px;
+            }
+
+            .topbar {
+                padding: 1.5rem 1rem 0;
+            }
+
+            .hero {
+                min-height: 70vh;
+                padding: 3rem 1rem;
+            }
+
+            .content {
+                padding: 0 1rem 4rem;
+            }
+
+            .example-body {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .arch-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                display: none;
+            }
+
+            .comparison-mobile {
+                display: flex;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; scroll-behavior: auto !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<nav class="topbar">
+    <a href="index.html" class="label">← Projects</a>
+</nav>
+
+<section class="hero" id="top">
+    <div class="hero-content">
+        <svg class="hero-motif" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="32" fill="#a9a6c9"/>
+            <circle cx="29" cy="35" r="24" fill="#4f8040"/>
+            <circle cx="35" cy="29" r="15" fill="#c48d3c"/>
+            <polygon points="35,21 43,36 27,36" fill="#0c0b0a"/>
+        </svg>
+        <div class="hero-badge label">AI × Music Research · June 2024</div>
+        <h1><em>Vision2Music</em><br>vs Soundmatch</h1>
+        <p class="hero-sub">When an AI looks at an image, what music does it hear? A comparison of two fundamentally different approaches to visual-to-audio matching.</p>
+        <a href="#approach" class="hero-arrow" aria-label="Scroll down">↓</a>
+    </div>
+</section>
+
+<!-- ═══════════ THE APPROACH ═══════════ -->
+<main class="content">
+    <section class="section" id="approach">
+        <h2>The Problem</h2>
+        <p>Which music fits best for an image or video? This is a subjective but highly relevant question for the media and ad industry. At <a href="https://www.lybs.eu" target="_blank" rel="noopener">LYBS</a>, we developed an AI called <strong>Vision2Music</strong> that suggests music for any given image or video.</p>
+        <p>To our knowledge, the only comparable feature in the market is <strong>Soundmatch</strong> by Epidemic Sound. Their approach, as they describe it:</p>
+
+        <blockquote>
+            Soundmatch identifies what the shot in the video contains and generates relevant keywords for a semantic search. It then uses data insight into how these keywords are typically used at scale, powered by over 2.5 billion daily views of YouTube videos containing Epidemic Sound music.
+            <cite>— Epidemic Sound</cite>
+        </blockquote>
+    </section>
+
+    <section class="section">
+        <h2>Two Architectures, One Goal</h2>
+        <p>Both systems use a <strong>Vision AI</strong> and a <strong>Music AI</strong>. The critical difference lies in how these two components communicate.</p>
+
+        <div class="arch-comparison">
+            <div class="arch-box v2m">
+                <div class="arch-title">Vision2Music</div>
+                <div class="arch-flow">
+                    <div class="arch-node">Image / Video</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-node">Vision AI</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-node accent">Direct Neural Link</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-node">Music AI</div>
+                </div>
+            </div>
+            <div class="arch-box">
+                <div class="arch-title">Soundmatch</div>
+                <div class="arch-flow">
+                    <div class="arch-node">Image / Video</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-node">Vision AI</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-node keyword">Keywords</div>
+                    <div class="arch-arrow">↓</div>
+                    <div class="arch-node">Music AI</div>
+                </div>
+            </div>
+        </div>
+
+        <p>Soundmatch bridges the gap with <strong>keywords</strong> — mainly capturing the mood of an image. Our approach uses a <strong>direct neural connection</strong> between the two AIs, meaning they are not limited to communicating through keywords. This unlocks something powerful: <strong>figuration</strong>.</p>
+
+        <p>Figuration means the AI can musically represent specific objects and elements within an image — not just its overall mood. This leads to far more diverse, surprising, and contextually rich suggestions. And the best part: the entire neural connection is trained unsupervised, using text alone — no curated image-music pairs required.</p>
+
+        <div class="comparison">
+            <div class="comparison-cell header v2m">Vision2Music</div>
+            <div class="comparison-cell header">Soundmatch</div>
+            <div class="comparison-cell"><p>Direct neural connection between Vision AI and Music AI — no keyword bottleneck</p></div>
+            <div class="comparison-cell"><p>Keywords extracted from video, matched via large-scale YouTube usage data</p></div>
+            <div class="comparison-cell"><p>Can represent specific objects in the image through music (figuration)</p></div>
+            <div class="comparison-cell"><p>Primarily captures the overall mood of the image</p></div>
+            <div class="comparison-cell"><p>Excels at <strong>individualistic, edge-case</strong> scenarios</p></div>
+            <div class="comparison-cell"><p>Excels at <strong>generic, broad-appeal</strong> scenarios</p></div>
+        </div>
+
+        <!-- Mobile comparison (shown only on small screens) -->
+        <div class="comparison-mobile">
+            <div class="comparison-row-mobile">
+                <div class="row-label v2m">Vision2Music — Communication</div>
+                <p>Direct neural connection between Vision AI and Music AI — no keyword bottleneck</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label sm">Soundmatch — Communication</div>
+                <p>Keywords extracted from video, matched via large-scale YouTube usage data</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label v2m">Vision2Music — Representation</div>
+                <p>Can represent specific objects in the image through music (figuration)</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label sm">Soundmatch — Representation</div>
+                <p>Primarily captures the overall mood of the image</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label v2m">Vision2Music — Best for</div>
+                <p>Excels at <strong>individualistic, edge-case</strong> scenarios</p>
+            </div>
+            <div class="comparison-row-mobile">
+                <div class="row-label sm">Soundmatch — Best for</div>
+                <p>Excels at <strong>generic, broad-appeal</strong> scenarios</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Examples</h2>
+        <p>The following examples demonstrate how figuration allows Vision2Music to respond to different elements within the same image — while Soundmatch tends toward more uniform suggestions.</p>
+
+        <!-- ── Example 1: Formula 1 ── -->
+        <div class="example-card">
+            <div class="example-image-wrap">
+                <img src="https://markoduda.github.io/formula_1.png" alt="Formula 1 car in Monte Carlo" loading="lazy">
+                <span class="example-label label">Example 01</span>
+            </div>
+            <div class="example-body">
+                <h3>Formula 1 — Monte Carlo</h3>
+                <p>Vision2Music sees two distinct elements: the <strong>Monte Carlo villa</strong> in the background and the <strong>Formula 1 car</strong>. It responds with an opera track for the elegance and a high-energy EDM track for the speed. Soundmatch suggests mostly upbeat pop and EDM — capturing the energy, but not the duality.</p>
+
+                <div class="track-group">
+                    <div class="track-group-label label v2m">Vision2Music picks</div>
+                    <div class="spotify-embed">
+                        <iframe src="https://open.spotify.com/embed/track/4zysbaV1tu9OD35hTz91gs?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Opera Track"></iframe>
+                    </div>
+                    <div class="spotify-embed">
+                        <iframe src="https://open.spotify.com/embed/track/4Fw9pEVsvkpwyIHoVKJ6yI?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Set The Tempo — EDM Track"></iframe>
+                    </div>
+                </div>
+
+                <div class="track-group">
+                    <div class="track-group-label label soundmatch">Soundmatch picks</div>
+                    <a href="https://www.epidemicsound.com/music/search/soundmatch/video/?files%5B%5D=OVZWK4RPGY4DENDBHE4DEMBZMM2DIOBXG44WGY3EMUYDAY3EMEZDSZTFGIZS6ZTSMFWWKL3EMZRDENLCMMZC2YRVMJRC2NBTHFRC2ODGGI3C2MBYGJTDOOBQGZSTCN3D" target="_blank" rel="noopener" class="soundmatch-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+                        View on Epidemic Sound
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Example 2: Tank ── -->
+        <div class="example-card">
+            <div class="example-image-wrap">
+                <img src="https://markoduda.github.io/tank.png" alt="Military tank" loading="lazy">
+                <span class="example-label label">Example 02</span>
+            </div>
+            <div class="example-body">
+                <h3>Military Tank</h3>
+                <p>Vision2Music picks up on the raw power and the political weight of the image: a <strong>mighty metal song</strong> and a <strong>rebellious protest song</strong>. Soundmatch responds with heroic and epic music — the kind that would suit a Call of Duty trailer.</p>
+
+                <div class="track-group">
+                    <div class="track-group-label label v2m">Vision2Music picks</div>
+                    <div class="spotify-embed">
+                        <iframe src="https://open.spotify.com/embed/track/2HzQnBbzfJIUYIub2UlccS?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Metal Track"></iframe>
+                    </div>
+                    <div class="spotify-embed">
+                        <iframe src="https://open.spotify.com/embed/track/6LH94JKGmGqakhshtsGnNz?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Rebellious Protest Song"></iframe>
+                    </div>
+                </div>
+
+                <div class="track-group">
+                    <div class="track-group-label label soundmatch">Soundmatch picks</div>
+                    <a href="https://www.epidemicsound.com/music/search/soundmatch/video/?files%5B%5D=OVZWK4RPGY4DENDBHE4DEMBZMM2DIOBXG44WGY3EMUYDAY3EMEZDSZTFGIZS6ZTSMFWWKL3DG5TGIZJSGU2C2N3DGJSC2NBQMYYC2YTCMVSS2NZZGJRGMZBUHA3TCZDD" target="_blank" rel="noopener" class="soundmatch-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+                        View on Epidemic Sound
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Example 3: Dalí ── -->
+        <div class="example-card">
+            <div class="example-image-wrap">
+                <img src="https://markoduda.github.io/Die_Beständigkeit_der_Erinnerung.jpg" alt="The Persistence of Memory by Salvador Dalí" loading="lazy">
+                <span class="example-label label">Example 03</span>
+            </div>
+            <div class="example-body">
+                <h3>The Persistence of Memory — Dalí</h3>
+                <p>Perhaps the most striking example. For Dalí's surrealist masterpiece, Vision2Music chose <strong>"Gesang der Jünglinge"</strong> by Karlheinz Stockhausen — an avant-garde 1950s electronic piece that mixes chopped-up vocal recordings with abstract electronic bleeps and bloops. A surreal painting paired with surreal music. Soundmatch suggests classical music — beautiful, but safe. More suited for a fairy tale than for melting clocks.</p>
+
+                <div class="track-group">
+                    <div class="track-group-label label v2m">Vision2Music picks</div>
+                    <div class="spotify-embed">
+                        <iframe src="https://open.spotify.com/embed/track/4EXt1g03wRJUGMrmdw9VYA?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Gesang der Jünglinge — Stockhausen"></iframe>
+                    </div>
+                </div>
+
+                <div class="track-group">
+                    <div class="track-group-label label soundmatch">Soundmatch picks</div>
+                    <a href="https://www.epidemicsound.com/music/search/soundmatch/video/?files%5B%5D=OVZWK4RPGY4DENDBHE4DEMBZMM2DIOBXG44WGY3EMUYDAY3EMEZDSZTFGIZS6ZTSMFWWKL3DGNTDCNJYMM3S2M3GME4C2NDEGVRC2YRYMQ2C2OJRMI4GGMTCME4TQMRZ" target="_blank" rel="noopener" class="soundmatch-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+                        View on Epidemic Sound
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section">
+        <h2>Details for the Curious</h2>
+        <p>Vision2Music works by training a <strong>shared embedding space</strong> for both vision and music. Images and audio tracks are projected into the same latent space, enabling cross-modal retrieval in both directions.</p>
+        <p>In practice, this means the system can also find <strong>matching images for a given piece of music</strong> — but here lies an interesting asymmetry. While image-to-music suggestions are diverse and contextually rich, music-to-image retrieval tends to surface images of <strong>musical instruments</strong>. The diversity that makes Vision2Music compelling in one direction doesn't fully carry over to the reverse.</p>
+        <p>Another intriguing possibility: since the shared embedding space encodes semantic meaning across modalities, it could theoretically serve as <strong>input for diffusion models</strong> like DALL·E — using music instead of text as a conditioning signal for image generation.</p>
+        <p>As for how the unsupervised training of this shared space actually works — that, unfortunately, has to remain under wraps.</p>
+    </section>
+
+    <section class="section">
+        <h2>Conclusion</h2>
+        <p>Both approaches have their merits. Soundmatch leverages an enormous dataset and delivers reliable, broadly appealing results. Vision2Music, with its direct neural connection, trades that reliability for something more interesting: the ability to <strong>interpret</strong> an image, not just classify it.</p>
+        <p>For commercial, generic use cases, Soundmatch is the safe choice. But if you're looking for music that truly <strong>responds</strong> to what's in an image — with all its nuance, contradiction, and surprise — Vision2Music opens up possibilities that keywords alone cannot reach.</p>
+    </section>
+</main>
+
+</body>
+</html>
