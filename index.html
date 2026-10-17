@@ -121,6 +121,35 @@
             color: var(--accent);
             transform: translateX(4px);
         }
+
+        .profiles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .profiles a {
+            padding: 0;
+            border-bottom: none;
+            gap: 6px;
+            color: var(--text-muted);
+        }
+
+        .profiles a::after {
+            content: '↗';
+            font-size: 11px;
+        }
+
+        .profiles a:hover,
+        .profiles a:focus-visible {
+            color: var(--accent);
+        }
+
+        .profiles a:hover::after,
+        .profiles a:focus-visible::after {
+            transform: translate(2px, -2px);
+        }
     </style>
 </head>
 <body>
@@ -128,6 +157,10 @@
     <header>
         <h1>Marko Duda</h1>
         <div class="label">Projects</div>
+        <nav class="profiles">
+            <a href="https://github.com/markoduda/" class="label" target="_blank" rel="noopener">My GitHub</a>
+            <a href="https://scholar.google.com/citations?user=zh_7stsAAAAJ&amp;hl=en" class="label" target="_blank" rel="noopener">My Google Scholar</a>
+        </nav>
     </header>
 
     <section>
