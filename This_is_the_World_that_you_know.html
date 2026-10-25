@@ -33,6 +33,7 @@
 
         body {
             min-height: 100vh;
+            min-height: 100svh;
             font-family: 'Share Tech Mono', 'Courier New', monospace;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
@@ -170,6 +171,10 @@
             max-width: 340px;
         }
 
+        .details dd {
+            overflow-wrap: anywhere;
+        }
+
         .details dt {
             color: var(--green-dim);
             text-transform: uppercase;
@@ -184,6 +189,48 @@
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: var(--green-dim);
+        }
+
+        /* Smartphone hochkant */
+        @media (max-width: 600px) {
+            main {
+                padding: 2.5rem 16px calc(3rem + env(safe-area-inset-bottom));
+                gap: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+                min-height: 3.45em; /* Platz für 3 Zeilen, damit beim Tippen nichts springt */
+            }
+
+            .terminal-bar {
+                font-size: 0.65rem;
+                letter-spacing: 0.1em;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .terminal-body {
+                padding: 1.5rem 1rem 1.75rem;
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            .terminal-body .prompt {
+                font-size: 0.95rem;
+            }
+
+            .terminal-body h2 {
+                font-size: 1.25rem;
+                letter-spacing: 0.05em;
+            }
+
+            .details {
+                gap: 0.35rem 1rem;
+            }
+
+            .meme {
+                max-width: 100%;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -240,7 +287,7 @@
         const canvas = document.getElementById('rain');
         const ctx = canvas.getContext('2d');
         const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789Z:・."=*+-<>¦|';
-        const fontSize = 16;
+        const fontSize = window.innerWidth <= 600 ? 13 : 16;
         let columns, drops;
 
         function resize() {
