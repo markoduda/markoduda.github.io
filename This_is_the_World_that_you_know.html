@@ -18,8 +18,6 @@
             --green-mid: #00c832;
             --green-dim: #008f11;
             --green-dark: #003b00;
-            --red: #e0312f;
-            --blue: #2f6be0;
         }
 
         * {
@@ -180,47 +178,6 @@
             padding-top: 0.15rem;
         }
 
-        .pills {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2.25rem;
-        }
-
-        .pill {
-            font: inherit;
-            font-size: 0.95rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 0.7rem 1.4rem;
-            border-radius: 999px;
-            border: 1px solid currentColor;
-            background: transparent;
-            cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .pill.red { color: var(--red); }
-        .pill.blue { color: var(--blue); }
-
-        .pill.red:hover, .pill.red:focus-visible {
-            background: var(--red);
-            color: #000;
-            box-shadow: 0 0 18px var(--red);
-        }
-
-        .pill.blue:hover, .pill.blue:focus-visible {
-            background: var(--blue);
-            color: #000;
-            box-shadow: 0 0 18px var(--blue);
-        }
-
-        .answer {
-            margin-top: 1.25rem;
-            min-height: 1.7em;
-            color: var(--green-mid);
-        }
 
         footer {
             font-size: 0.75rem;
@@ -257,12 +214,6 @@
                     <dt>Zeit</dt><dd>00:00 Uhr</dd>
                     <dt>Ort</dt><dd>Platzhalter-Adresse</dd>
                 </dl>
-
-                <div class="pills">
-                    <button class="pill red" data-answer="Willkommen im Kaninchenbau. Wir sehen uns dort.">Rote Pille</button>
-                    <button class="pill blue" data-answer="Die Geschichte endet hier. Du wachst in deinem Bett auf ...">Blaue Pille</button>
-                </div>
-                <p class="answer" id="answer" aria-live="polite"></p>
             </div>
         </section>
 
@@ -284,14 +235,6 @@
                 setTimeout(type, i === 1 ? 600 : 70 + Math.random() * 90);
             }
         })();
-
-        // pill choice
-        const answer = document.getElementById('answer');
-        document.querySelectorAll('.pill').forEach(btn => {
-            btn.addEventListener('click', () => {
-                answer.textContent = '> ' + btn.dataset.answer;
-            });
-        });
 
         // digital rain
         const canvas = document.getElementById('rain');
