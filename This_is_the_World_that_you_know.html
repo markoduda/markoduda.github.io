@@ -233,6 +233,97 @@
             }
         }
 
+        /* Musik-Abfrage */
+        .music-ask {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        .music-ask[hidden] {
+            display: none;
+        }
+
+        .music-ask-box {
+            width: 100%;
+            max-width: 420px;
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            line-height: 1.6;
+            background: rgba(0, 10, 2, 0.95);
+            border: 1px solid var(--green-dim);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+            text-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+        }
+
+        .music-ask-box p + p {
+            margin-top: 0.5rem;
+            color: var(--green-dim);
+            font-size: 0.9rem;
+        }
+
+        .pills {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .pill {
+            flex: 1;
+            padding: 0.8rem 0.5rem;
+            border-radius: 999px;
+            border: 0;
+            font: inherit;
+            font-size: 0.95rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .pill-red {
+            background: #c4141c;
+            box-shadow: 0 0 16px rgba(255, 30, 40, 0.5);
+        }
+
+        .pill-blue {
+            background: #1446c4;
+            box-shadow: 0 0 16px rgba(40, 90, 255, 0.5);
+        }
+
+        .pill:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 3px;
+        }
+
+        .music-toggle {
+            position: fixed;
+            right: 16px;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            z-index: 3;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--green-dim);
+            background: rgba(0, 10, 2, 0.85);
+            box-shadow: 0 0 16px rgba(0, 255, 65, 0.25);
+            font-size: 1.3rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .music-toggle[hidden] {
+            display: none;
+        }
+
+        .music-toggle:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 3px;
+        }
+
         @media (prefers-reduced-motion: reduce) {
             h1 .cursor { animation: none; }
         }
@@ -240,6 +331,20 @@
 </head>
 <body>
     <canvas id="rain" aria-hidden="true"></canvas>
+
+    <audio id="music" src="matrix/Matrix.mp3" preload="none" loop></audio>
+    <button type="button" class="music-toggle" id="music-toggle" hidden></button>
+
+    <div class="music-ask" id="music-ask" role="dialog" aria-modal="true" aria-labelledby="music-ask-text">
+        <div class="music-ask-box">
+            <p id="music-ask-text">Diese Seite möchte Musik abspielen.</p>
+            <p>Rote Pille: mit Musik. Blaue Pille: ohne Musik.</p>
+            <div class="pills">
+                <button type="button" class="pill pill-red" id="music-yes">Rote Pille</button>
+                <button type="button" class="pill pill-blue" id="music-no">Blaue Pille</button>
+            </div>
+        </div>
+    </div>
 
     <main>
         <h1 id="title" aria-label="This is the World that you know"><span id="typed"></span><span class="cursor"></span></h1>
@@ -270,6 +375,50 @@
     </main>
 
     <script>
+        // Musik erst nach Zustimmung abspielen
+        const MUSIC_START = 53; // Song beginnt bei 0:53
+        const musicAsk = document.getElementById('music-ask');
+        const music = document.getElementById('music');
+        const musicToggle = document.getElementById('music-toggle');
+        let musicStarted = false;
+
+        function updateToggle() {
+            const on = !music.paused;
+            musicToggle.textContent = on ? '🔊' : '🔇';
+            musicToggle.setAttribute('aria-label', on ? 'Musik ausschalten' : 'Musik einschalten');
+        }
+
+        function playMusic() {
+            if (!musicStarted) {
+                musicStarted = true;
+                music.currentTime = MUSIC_START;
+                music.addEventListener('loadedmetadata', () => {
+                    if (music.currentTime < MUSIC_START) music.currentTime = MUSIC_START;
+                }, { once: true });
+            }
+            music.play().catch(updateToggle);
+        }
+
+        music.addEventListener('play', updateToggle);
+        music.addEventListener('pause', updateToggle);
+
+        musicToggle.addEventListener('click', () => {
+            if (music.paused) playMusic(); else music.pause();
+        });
+
+        function closeMusicAsk() {
+            musicAsk.hidden = true;
+            musicToggle.hidden = false;
+            updateToggle();
+        }
+
+        document.getElementById('music-yes').addEventListener('click', () => {
+            playMusic();
+            closeMusicAsk();
+        });
+        document.getElementById('music-no').addEventListener('click', closeMusicAsk);
+        document.getElementById('music-yes').focus();
+
         // typewriter title
         const titleText = 'This is the World that you know';
         const typed = document.getElementById('typed');
