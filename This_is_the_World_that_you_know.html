@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This is the World that you know</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000;
+            --green: #00ff41;
+            --green-mid: #00c832;
+            --green-dim: #008f11;
+            --green-dark: #003b00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background: var(--bg);
+            color: var(--green);
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100svh;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        #rain {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* scanlines */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0,
+                rgba(0, 0, 0, 0) 2px,
+                rgba(0, 0, 0, 0.18) 3px
+            );
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 4rem 1rem 5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        h1 {
+            font-weight: 400;
+            font-size: clamp(1.9rem, 6.5vw, 3.6rem);
+            line-height: 1.15;
+            text-align: center;
+            letter-spacing: 0.04em;
+            color: var(--green);
+            text-shadow:
+                0 0 4px var(--green),
+                0 0 14px var(--green-mid),
+                0 0 32px var(--green-dim);
+            min-height: 2.3em;
+        }
+
+        h1 .cursor {
+            display: inline-block;
+            width: 0.55em;
+            height: 0.95em;
+            margin-left: 0.08em;
+            vertical-align: -0.1em;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+            animation: blink 1s steps(1) infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .meme {
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--green-dim);
+            box-shadow: 0 0 24px rgba(0, 255, 65, 0.25);
+            background: #000;
+            padding: 6px;
+        }
+
+        .meme img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .terminal {
+            width: 100%;
+            background: rgba(0, 10, 2, 0.82);
+            border: 1px solid var(--green-dim);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.15), inset 0 0 40px rgba(0, 59, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        .terminal-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.55rem 1rem;
+            border-bottom: 1px solid var(--green-dark);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--green-dim);
+        }
+
+        .terminal-body {
+            padding: 2rem 1.5rem 2.25rem;
+            text-align: center;
+            line-height: 1.7;
+            font-size: 1.05rem;
+            text-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+        }
+
+        .terminal-body .prompt {
+            text-align: left;
+            color: var(--green-mid);
+            margin-bottom: 1.5rem;
+        }
+
+        .terminal-body h2 {
+            font-weight: 400;
+            font-size: 1.5rem;
+            letter-spacing: 0.08em;
+            margin-bottom: 1.25rem;
+        }
+
+        .terminal-body p + p {
+            margin-top: 1rem;
+        }
+
+        .details {
+            margin: 2rem auto 0;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.4rem 1.25rem;
+            text-align: left;
+            max-width: 340px;
+        }
+
+        .details dd {
+            overflow-wrap: anywhere;
+        }
+
+        .details dt {
+            color: var(--green-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.85rem;
+            padding-top: 0.15rem;
+        }
+
+
+        footer {
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--green-dim);
+        }
+
+        /* Smartphone hochkant */
+        @media (max-width: 600px) {
+            main {
+                padding: 2.5rem 16px calc(3rem + env(safe-area-inset-bottom));
+                gap: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+                min-height: 3.45em; /* Platz für 3 Zeilen, damit beim Tippen nichts springt */
+            }
+
+            .terminal-bar {
+                font-size: 0.65rem;
+                letter-spacing: 0.1em;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .terminal-body {
+                padding: 1.5rem 1rem 1.75rem;
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            .terminal-body .prompt {
+                font-size: 0.95rem;
+            }
+
+            .terminal-body h2 {
+                font-size: 1.25rem;
+                letter-spacing: 0.05em;
+            }
+
+            .details {
+                gap: 0.35rem 1rem;
+            }
+
+            .meme {
+                max-width: 100%;
+            }
+        }
+
+        /* Musik-Abfrage */
+        .music-ask {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        .music-ask[hidden] {
+            display: none;
+        }
+
+        .music-ask-box {
+            width: 100%;
+            max-width: 420px;
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            line-height: 1.6;
+            background: rgba(0, 10, 2, 0.95);
+            border: 1px solid var(--green-dim);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+            text-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
+        }
+
+        .music-ask-box p + p {
+            margin-top: 0.5rem;
+            color: var(--green-dim);
+            font-size: 0.9rem;
+        }
+
+        .pills {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .pill {
+            flex: 1;
+            padding: 0.8rem 0.5rem;
+            border-radius: 999px;
+            border: 0;
+            font: inherit;
+            font-size: 0.95rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .pill-red {
+            background: #c4141c;
+            box-shadow: 0 0 16px rgba(255, 30, 40, 0.5);
+        }
+
+        .pill-blue {
+            background: #1446c4;
+            box-shadow: 0 0 16px rgba(40, 90, 255, 0.5);
+        }
+
+        .pill:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 3px;
+        }
+
+        .music-toggle {
+            position: fixed;
+            right: 16px;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            z-index: 3;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--green-dim);
+            background: rgba(0, 10, 2, 0.85);
+            box-shadow: 0 0 16px rgba(0, 255, 65, 0.25);
+            font-size: 1.3rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .music-toggle[hidden] {
+            display: none;
+        }
+
+        .music-toggle:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            h1 .cursor { animation: none; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="rain" aria-hidden="true"></canvas>
+
+    <audio id="music" src="matrix/Matrix.mp3" preload="none" loop></audio>
+    <button type="button" class="music-toggle" id="music-toggle" hidden></button>
+
+    <div class="music-ask" id="music-ask" role="dialog" aria-modal="true" aria-labelledby="music-ask-text">
+        <div class="music-ask-box">
+            <p id="music-ask-text">Diese Seite möchte Musik abspielen.</p>
+            <p>Rote Pille: mit Musik. Blaue Pille: ohne Musik.</p>
+            <div class="pills">
+                <button type="button" class="pill pill-red" id="music-yes">Rote Pille</button>
+                <button type="button" class="pill pill-blue" id="music-no">Blaue Pille</button>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <h1 id="title" aria-label="This is the World that you know"><span id="typed"></span><span class="cursor"></span></h1>
+
+        <section class="terminal">
+            <div class="terminal-bar">
+                <span>// incoming transmission</span>
+                <span>v1.0</span>
+            </div>
+            <div class="terminal-body">
+                <p>Ich will dir sagen, warum du hier bist. Du bist hier, weil du etwas weißt. Etwas, das du nicht erklären kannst. Aber du fühlst es. Du fühlst es schon dein ganzes Leben lang, dass mit der Welt etwas nicht stimmt. Du weißt nicht, was, aber es ist da. Wie ein Splitter in deinem Kopf, der dich verrückt macht. Dieses Gefühl hat dich zu mir geführt.</p>
+                <p>Die Maschinen haben die Kontrolle über unser Leben übernommen. Sie wissen nicht nur alles über uns, sie nehmen uns mittlerweile auch zunehmend das Denken ab. Ich habe dich auserwählt, um Teil der Widerstandsbewegung zu werden. Für diesen Zweck habe ich extra eine Wohnung angemietet. Wenn du von außerhalb von Köln kommst, kannst du gerne schon am Freitag zu mir kommen und bei mir übernachten. Schreibe mir aber bitte für diesen Fall nochmal. Plus Eins ist selbstverständlich auch willkommen.</p>
+                <p>Vergiss nicht den Dresscode: Schwarze Kleidung + Sonnenbrille.</p>
+
+                <dl class="details">
+                    <dt>Datum</dt><dd>30. Januar<br>(mein 32. Geburtstag)</dd>
+                    <dt>Zeit</dt><dd>19 Uhr</dd>
+                    <dt>Ort</dt><dd>In der Kreuzau 5a, 51105 Köln</dd>
+                </dl>
+            </div>
+        </section>
+
+        <footer>There is no spoon.</footer>
+
+        <figure class="meme">
+            <img src="matrix/matrix_meme.jpg" alt="Neo stoppt Kugeln mit erhobener Hand – Blocking negative vibes like">
+        </figure>
+    </main>
+
+    <script>
+        // Musik erst nach Zustimmung abspielen
+        const MUSIC_START = 53; // Song beginnt bei 0:53
+        const musicAsk = document.getElementById('music-ask');
+        const music = document.getElementById('music');
+        const musicToggle = document.getElementById('music-toggle');
+        let musicStarted = false;
+
+        function updateToggle() {
+            const on = !music.paused;
+            musicToggle.textContent = on ? '🔊' : '🔇';
+            musicToggle.setAttribute('aria-label', on ? 'Musik ausschalten' : 'Musik einschalten');
+        }
+
+        function playMusic() {
+            if (!musicStarted) {
+                musicStarted = true;
+                music.currentTime = MUSIC_START;
+                music.addEventListener('loadedmetadata', () => {
+                    if (music.currentTime < MUSIC_START) music.currentTime = MUSIC_START;
+                }, { once: true });
+            }
+            music.play().catch(updateToggle);
+        }
+
+        music.addEventListener('play', updateToggle);
+        music.addEventListener('pause', updateToggle);
+
+        musicToggle.addEventListener('click', () => {
+            if (music.paused) playMusic(); else music.pause();
+        });
+
+        function closeMusicAsk() {
+            musicAsk.hidden = true;
+            musicToggle.hidden = false;
+            updateToggle();
+        }
+
+        document.getElementById('music-yes').addEventListener('click', () => {
+            playMusic();
+            closeMusicAsk();
+        });
+        document.getElementById('music-no').addEventListener('click', closeMusicAsk);
+        document.getElementById('music-yes').focus();
+
+        // typewriter title
+        const titleText = 'This is the World that you know';
+        const typed = document.getElementById('typed');
+        let i = 0;
+        (function type() {
+            if (i <= titleText.length) {
+                typed.textContent = titleText.slice(0, i++);
+                setTimeout(type, i === 1 ? 600 : 70 + Math.random() * 90);
+            }
+        })();
+
+        // digital rain
+        const canvas = document.getElementById('rain');
+        const ctx = canvas.getContext('2d');
+        const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789Z:・."=*+-<>¦|';
+        const fontSize = window.innerWidth <= 600 ? 13 : 16;
+        let columns, drops;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = Math.ceil(canvas.width / fontSize);
+            drops = Array.from({ length: columns }, () => Math.random() * -canvas.height / fontSize);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + 'px "Share Tech Mono", monospace';
+
+            for (let c = 0; c < columns; c++) {
+                const ch = glyphs[Math.floor(Math.random() * glyphs.length)];
+                const x = c * fontSize;
+                const y = drops[c] * fontSize;
+                ctx.fillStyle = Math.random() > 0.975 ? '#d8ffd8' : '#00ff41';
+                ctx.globalAlpha = 0.55;
+                ctx.fillText(ch, x, y);
+                ctx.globalAlpha = 1;
+
+                if (y > canvas.height && Math.random() > 0.975) drops[c] = 0;
+                drops[c]++;
+            }
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            setInterval(draw, 50);
+        }
+    </script>
+</body>
+</html>

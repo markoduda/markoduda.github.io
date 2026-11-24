@@ -1,0 +1,4 @@
+# Bilder als Binärdateien behandeln (keine Zeilenende-Konvertierung, kein Text-Diff)
+*.jpg binary
+*.jpeg binary
+*.png binary
